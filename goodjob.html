@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Расширенный ИТ-weekend 19/10/2025</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', Monaco, monospace;
+        }
+
+        body {
+            background-color: #1a1a2e;
+            color: #e6e6e6;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 0;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Фоновые элементы */
+        body::before {
+            content: "21";
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 35vw;
+            font-weight: bold;
+            color: rgba(255, 255, 255, 0.03);
+            z-index: -1;
+            font-family: 'Courier New', monospace;
+            pointer-events: none;
+        }
+
+        .terminal-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            border: 1px solid #4a4a8a;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(74, 74, 138, 0.3);
+            margin-top: 20px;
+            margin-bottom: 20px;
+            background: #16213e;
+        }
+
+        .terminal-header {
+            background: #2d2b55;
+            padding: 12px 20px;
+            border-bottom: 1px solid #4a4a8a;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .terminal-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .terminal-button {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .close { background: #ff6b6b; }
+        .minimize { background: #ffd93d; }
+        .maximize { background: #6bcf7f; }
+
+        .terminal-title {
+            color: #bd93f9;
+            font-size: 14px;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .run-button {
+            background: linear-gradient(135deg, #8be9fd, #6272a4);
+            color: #282a36;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(139, 233, 253, 0.3);
+        }
+
+        .run-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(139, 233, 253, 0.5);
+            background: linear-gradient(135deg, #6272a4, #8be9fd);
+        }
+
+        .run-button:before {
+            content: "▶";
+            font-size: 12px;
+        }
+
+        .terminal-body {
+            padding: 30px;
+            background: #16213e;
+        }
+
+        .prompt {
+            color: #8be9fd;
+            margin-bottom: 10px;
+        }
+
+        .command {
+            color: #50fa7b;
+        }
+
+        .output {
+            margin: 20px 0;
+        }
+
+        h1 {
+            color: #bd93f9;
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(189, 147, 249, 0.3);
+        }
+
+        h2 {
+            color: #50fa7b;
+            font-size: 1.6rem;
+            margin: 25px 0 15px;
+            border-bottom: 1px solid #4a4a8a;
+            padding-bottom: 8px;
+        }
+
+        h3 {
+            color: #ff79c6;
+            font-size: 1.3rem;
+            margin: 20px 0 10px;
+        }
+
+        .section {
+            margin: 25px 0;
+            padding: 20px;
+            background: rgba(45, 43, 85, 0.7);
+            border-radius: 6px;
+            border: 1px solid #4a4a8a;
+        }
+
+        .code-block {
+            background: #2d2b55;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+            border: 1px solid #4a4a8a;
+            overflow-x: auto;
+        }
+
+        .var {
+            color: #ff79c6;
+        }
+
+        .value {
+            color: #f1fa8c;
+        }
+
+        .comment {
+            color: #6272a4;
+            font-style: italic;
+        }
+
+        .list-item {
+            margin: 10px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .list-item:before {
+            content: ">";
+            color: #50fa7b;
+            position: absolute;
+            left: 0;
+        }
+
+        .carousel-container {
+            position: relative;
+            max-width: 900px;
+            margin: 40px auto;
+            overflow: hidden;
+            border-radius: 6px;
+            border: 1px solid #4a4a8a;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .carousel {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .carousel img {
+            width: 100%;
+            flex-shrink: 0;
+            height: 400px;
+            object-fit: cover;
+        }
+
+        .carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid #4a4a8a;
+            color: #e6e6e6;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .carousel-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .prev {
+            left: 15px;
+        }
+
+        .next {
+            right: 15px;
+        }
+
+        .carousel-indicators {
+            display: flex;
+            justify-content: center;
+            margin-top: 15px;
+            gap: 10px;
+        }
+
+        .indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #4a4a8a;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .indicator.active {
+            background: #50fa7b;
+        }
+
+        .content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .event-info, .event-details {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(45, 43, 85, 0.7);
+            padding: 30px;
+            border-radius: 6px;
+            border: 1px solid #4a4a8a;
+        }
+
+        .timeline {
+            flex: 100%;
+            background: rgba(45, 43, 85, 0.7);
+            padding: 30px;
+            border-radius: 6px;
+            border: 1px solid #4a4a8a;
+            margin-top: 20px;
+        }
+
+        .timeline-item {
+            display: flex;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed #4a4a8a;
+        }
+
+        .timeline-time {
+            flex: 0 0 100px;
+            font-weight: bold;
+            color: #8be9fd;
+        }
+
+        .timeline-content {
+            flex: 1;
+        }
+
+        .speaker {
+            color: #6272a4;
+            margin-top: 5px;
+        }
+
+        .partners {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin: 30px 0;
+        }
+
+        .partner-logo {
+            height: 60px;
+            filter: grayscale(100%) brightness(0.8);
+            opacity: 0.7;
+            transition: all 0.3s;
+        }
+
+        .partner-logo:hover {
+            filter: grayscale(0%) brightness(1);
+            opacity: 1;
+        }
+
+        .register-btn {
+            display: block;
+            width: 100%;
+            max-width: 400px;
+            margin: 30px auto;
+            padding: 20px 40px;
+            background: linear-gradient(135deg, #bd93f9, #ff79c6);
+            color: #282a36;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.2rem;
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(189, 147, 249, 0.4);
+            text-align: center;
+            text-decoration: none;
+            border: 1px solid #4a4a8a;
+        }
+
+        .register-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(189, 147, 249, 0.5);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 30px 0;
+            margin-top: 40px;
+            color: #6272a4;
+            border-top: 1px solid #4a4a8a;
+            font-size: 0.9rem;
+        }
+
+        .blink {
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        @media (max-width: 768px) {
+            .terminal-body {
+                padding: 20px 15px;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            h2 {
+                font-size: 1.4rem;
+            }
+
+            .carousel img {
+                height: 300px;
+            }
+
+            .content {
+                flex-direction: column;
+            }
+
+            .timeline-item {
+                flex-direction: column;
+            }
+
+            .timeline-time {
+                margin-bottom: 5px;
+            }
+
+            .register-btn {
+                max-width: 90%;
+                font-size: 1.1rem;
+                padding: 16px 30px;
+            }
+
+            .terminal-header {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .terminal-title {
+                position: static;
+                transform: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="terminal-container">
+        <div class="terminal-header">
+            <div class="terminal-buttons">
+                <div class="terminal-button close"></div>
+                <div class="terminal-button minimize"></div>
+                <div class="terminal-button maximize"></div>
+            </div>
+            <div class="terminal-title">bash — Расширенный ИТ-weekend 19.10.2025</div>
+            <a href="https://forms.yandex.ru/u/68da92315056900797c77a7f" class="run-button" target="_blank">Записаться</a>
+        </div>
+
+        <div class="terminal-body">
+            <div class="prompt">
+                user@school21:~$ <span class="command">cat event_details.md</span>
+            </div>
+
+            <div class="output">
+                <h1>Расширенный ИТ-weekend</h1>
+                <div class="code-block">
+                    <span class="var">event</span> = {<br>
+                    &nbsp;&nbsp;<span class="var">name</span>: <span class="value">"Расширенный ИТ-weekend"</span>, <span class="comment">// Название мероприятия</span><br>
+                    &nbsp;&nbsp;<span class="var">date</span>: <span class="value">"19.10.2025"</span>, <span class="comment">// Дата проведения</span><br>
+                    &nbsp;&nbsp;<span class="var">time</span>: <span class="value">"12:00"</span>, <span class="comment">// Время начала</span><br>
+                    &nbsp;&nbsp;<span class="var">location</span>: <span class="value">"Тургенева, 30, 10 этаж"</span>, <span class="comment">// Место проведения</span><br>
+                    &nbsp;&nbsp;<span class="var">participants</span>: <span class="value">"150-200"</span> <span class="comment">// Ожидаемое количество участников</span><br>
+                    }
+                </div>
+
+                <div class="carousel-container">
+                    <div class="carousel">
+                        <img src='1.jpg' alt="ИТ-конференция">
+                        <img src='2.jpg' alt="Участники мероприятия">
+                        <img src='3.jpg' alt="Технологии">
+                        <img src='4.jpg' alt="Спикеры">
+                        <img src='5.jpg' alt="Спикеры2">
+                    </div>
+                    <button class="carousel-btn prev">❮</button>
+                    <button class="carousel-btn next">❯</button>
+                    <div class="carousel-indicators">
+                        <div class="indicator active"></div>
+                        <div class="indicator"></div>
+                        <div class="indicator"></div>
+                        <div class="indicator"></div>
+                        <div class="indicator"></div>
+                    </div>
+                </div>
+
+                <div class="partners">
+                    <img src="https://via.placeholder.com/150x60/bd93f9/282a36?text=Globus+Labs" alt="Globus Labs" class="partner-logo">
+                    <img src="https://via.placeholder.com/150x60/50fa7b/282a36?text=Школа+21" alt="Школа 21" class="partner-logo">
+                    <img src="https://via.placeholder.com/150x60/8be9fd/282a36?text=ННГУ" alt="ННГУ им. Лобачевского" class="partner-logo">
+                </div>
+
+                <div class="content">
+                    <div class="event-info">
+                        <h2>О мероприятии</h2>
+                        <p>Расширенный ИТ-weekend — это уникальная площадка для обмена практическим опытом между начинающими специалистами и ведущими экспертами IT-индустрии.</p>
+
+                        <h3>Цели мероприятия:</h3>
+                        <div class="list-item">Расширить возможности обмена практическим опытом</div>
+                        <div class="list-item">Обеспечить контакт с ведущими специалистами отрасли</div>
+                        <div class="list-item">Поддержать ИТ-сообщество начинающих специалистов</div>
+                        <div class="list-item">Повысить качество образования и интереса к профессии</div>
+
+                        <h3>Основные тематики:</h3>
+                        <div class="list-item">Инструменты разработчика</div>
+                        <div class="list-item">Machine Learning в реальной жизни</div>
+                        <div class="list-item">Карьерные возможности в IT</div>
+                        <div class="list-item">Практические кейсы от экспертов</div>
+
+                        <h3>Для кого это мероприятие:</h3>
+                        <p>Участники интенсивов Школы 21, студенты ННГУ им. Н.И. Лобачевского, начинающие разработчики и все заинтересованные лица.</p>
+                    </div>
+
+                    <div class="event-details">
+                        <h2>Детали мероприятия</h2>
+
+                        <h3>Дата и время:</h3>
+                        <p>19 октября 2025 года<br>Начало в 12:00</p>
+
+                        <h3>Место проведения:</h3>
+                        <p>Тургенева, 30, 10 этаж<br>Трочка баш</p>
+
+                        <h3>Ориентировочное количество участников:</h3>
+                        <p>150-200 человек</p>
+
+                        <h3>Формат участия:</h3>
+                        <div class="list-item">Лекции и выступления спикеров</div>
+                        <div class="list-item">Нетворкинг-сессии</div>
+                        <div class="list-item">Живое общение с экспертами</div>
+
+                        <h3>Основные партнеры:</h3>
+                        <div class="list-item">Globus Labs</div>
+                        <div class="list-item">Школа 21 HH</div>
+                        <div class="list-item">ННГУ им. Н.И. Лобачевского</div>
+                    </div>
+                </div>
+
+                <a href="https://forms.yandex.ru/u/68da92315056900797c77a7f" class="register-btn" target="_blank">
+                    Записаться
+                </a>
+
+                <div class="timeline">
+                    <h2>Программа мероприятия</h2>
+
+                    <div class="timeline-item">
+                        <div class="timeline-time">12:00</div>
+                        <div class="timeline-content">
+                            <strong>Старт мероприятия</strong>
+                            <div class="speaker"></div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-time">12:30</div>
+                        <div class="timeline-content">
+                            <strong>Бугайченко Дмитрий – CDO блока Розничный бизнес, ПАО Сбербанк, Москва</strong>
+                            <div class="speaker"></div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-time">13:30</div>
+                        <div class="timeline-content">
+                            <strong>Александр Рочачев – Senior Data Scientist в solut.ai, Технический директор АНО «Космический рейс» и участник проектного офиса SpacePi.space</strong>
+                            <div class="speaker"></div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-time">14:30</div>
+                        <div class="timeline-content">
+                            <strong>Никита Соболев - лидер сообщества PythoNN</strong>
+                            <div class="speaker"> </div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-time">15:30</div>
+                        <div class="timeline-content">
+                            <strong>Алексей Селиванов - основатель приложения для поиска и планирования досуга из НН</strong>
+                            <div class="speaker"> </div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-time">16:30</div>
+                        <div class="timeline-content">
+                            <strong>Нетворкинг + практика</strong>
+                            <div class="speaker"> </div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-time">18:00</div>
+                        <div class="timeline-content">
+                            <strong>Завершение мероприятия</strong>
+                            <div class="speaker"> </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="prompt" id="last-prompt">
+                user@school21:~$ <span class="command"></span><span class="blink">_</span>
+            </div>
+
+            <div class="footer">
+                <p>© 2025 Расширенный ИТ-weekend.</p>
+                <p>Для участников Школы 21, студентов ННГУ и начинающих разработчиков</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const carousel = document.querySelector('.carousel');
+            const images = document.querySelectorAll('.carousel img');
+            const prevBtn = document.querySelector('.prev');
+            const nextBtn = document.querySelector('.next');
+            const indicators = document.querySelectorAll('.indicator');
+
+            let currentIndex = 0;
+            const totalImages = images.length;
+            let autoScrollInterval;
+
+            // Функция для обновления карусели
+            function updateCarousel() {
+                carousel.style.transform = `translateX(-${currentIndex * 100}%)`;
+
+                // Обновление индикаторов
+                indicators.forEach((indicator, index) => {
+                    if (index === currentIndex) {
+                        indicator.classList.add('active');
+                    } else {
+                        indicator.classList.remove('active');
+                    }
+                });
+            }
+
+            // Следующее изображение
+            function nextImage() {
+                currentIndex = (currentIndex + 1) % totalImages;
+                updateCarousel();
+            }
+
+            // Предыдущее изображение
+            function prevImage() {
+                currentIndex = (currentIndex - 1 + totalImages) % totalImages;
+                updateCarousel();
+            }
+
+            // Запуск автоматической прокрутки
+            function startAutoScroll() {
+                autoScrollInterval = setInterval(nextImage, 5000);
+            }
+
+            // Сброс автоматической прокрутки
+            function resetAutoScroll() {
+                clearInterval(autoScrollInterval);
+                startAutoScroll();
+            }
+
+            // Обработчики событий для кнопок
+            nextBtn.addEventListener('click', () => {
+                nextImage();
+                resetAutoScroll();
+            });
+            
+            prevBtn.addEventListener('click', () => {
+                prevImage();
+                resetAutoScroll();
+            });
+
+            // Обработчики событий для индикаторов
+            indicators.forEach((indicator, index) => {
+                indicator.addEventListener('click', () => {
+                    currentIndex = index;
+                    updateCarousel();
+                    resetAutoScroll();
+                });
+            });
+
+            // Запускаем автоматическую прокрутку
+startAutoScroll();
+
+// Анимация печатания текста в последнем prompt
+const lastPrompt = document.querySelector('#last-prompt .command');
+const text = "./register --event extended_it_weekend --date 19.10.2025";
+let i = 0;
+
+function typeWriter() {
+    if (i < text.length) {
+        lastPrompt.innerHTML += text.charAt(i);
+        i++;
+        setTimeout(typeWriter, 100);
+    }
+}
+
+setTimeout(typeWriter, 5000);
+
+// Добавляем текст авторов через 30 секунд
+setTimeout(() => {
+    // Очищаем строку
+    lastPrompt.innerHTML = "";
+    
+    const authorsText = "made by delisaro, duffmabe, reynoldd";
+    let j = 0;
+    
+    function typeAuthors() {
+        if (j < authorsText.length) {
+            lastPrompt.innerHTML += authorsText.charAt(j);
+            j++;
+            setTimeout(typeAuthors, 100);
+        }
+    }
+    
+    typeAuthors();
+}, 30000);
+        });
+    </script>
+</body>
+</html>
